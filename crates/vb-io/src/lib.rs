@@ -82,9 +82,9 @@ pub struct DecodedAudio {
 /// This uses a simple but efficient symphonia path; resampling is deferred
 /// to the engine layer to keep decode allocation-free.
 pub fn decode_media(path: &Path) -> Result<DecodedAudio, IoError> {
-    use symphonia::core::audio::{SampleBuffer, SignalSpec};
-    use symphonia::core::codecs::{CODEC_TYPE_NULL, CodecParameters};
-    use symphonia::core::formats::{FormatOptions, FormatReader};
+    use symphonia::core::audio::SampleBuffer;
+    use symphonia::core::codecs::CODEC_TYPE_NULL;
+    use symphonia::core::formats::FormatOptions;
     use symphonia::core::io::{MediaSourceStream, ReadOnlySource};
     use symphonia::core::meta::MetadataOptions;
     use symphonia::core::probe::Hint;
@@ -118,7 +118,7 @@ pub fn decode_media(path: &Path) -> Result<DecodedAudio, IoError> {
         .count() as u16;
 
     let mut decoder = symphonia::default::get_codecs()
-        .make(&params.codec_params, &Default::default())
+        .make(&track.codec_params, &Default::default())
         .map_err(|e| IoError::Decode(format!("decoder init: {e}")))?;
 
     let mut interleaved = Vec::new();
@@ -129,7 +129,10 @@ pub fn decode_media(path: &Path) -> Result<DecodedAudio, IoError> {
         let packet = format
             .next_packet()
             .map_err(|e| IoError::Decode(format!("packet read: {e}")))?;
-        if packet.data.is_empty() && packet.track_id != track.id {
+        if packet.data.is_empty() {
+            break;
+        }
+        if packet.track_id() != track.id {
             continue;
         }
         let decoded = decoder
@@ -138,7 +141,7 @@ pub fn decode_media(path: &Path) -> Result<DecodedAudio, IoError> {
         let spec = decoded.spec();
         let mut buffer = SampleBuffer::<f32>::new(
             decoded.capacity() as u64,
-            spec,
+            *spec,
         );
         buffer.copy_interleaved_ref(decoded);
         for &sample in buffer.samples().iter() {
@@ -149,7 +152,6 @@ pub fn decode_media(path: &Path) -> Result<DecodedAudio, IoError> {
     let frames = interleaved.len() as u64 / channels as u64;
 
     // Compute waveform peaks efficiently in chunks (allocation-free scan).
-    const PEAK_BLOCK_SIZE: usize = 512;
     let total_samples = interleaved.len();
     for chunk_start in (0..total_samples).step_by(PEAK_BLOCK_SIZE) {
         let chunk_end = (chunk_start + PEAK_BLOCK_SIZE).min(total_samples);
@@ -181,7 +183,7 @@ pub enum IoError {
 /// Offline render of a project or selection to WAV/FLAC.
 /// Keeps the render faster than real-time for low-end targets (no real-time
 /// device constraints; deterministic block size).
-pub fn render_offline(project: &Project, output_path: &Path) -> Result<(), IoError> {
+pub fn render_offline(_project: &Project, output_path: &Path) -> Result<(), IoError> {
     // Phase 4: offline render using the same graph as the audio engine.
     // For Phase 4 vertical slice, this verifies the output path and writes
     // a placeholder file confirming the pipeline connects.
