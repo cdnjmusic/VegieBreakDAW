@@ -24,7 +24,8 @@ fn main() {
 
 fn run(args: Vec<String>) -> Result<(), Box<dyn Error>> {
     match args.first().map(String::as_str) {
-        None | Some("--help" | "-h" | "help") => {
+        None => launch_ui(),
+        Some("--help" | "-h" | "help") => {
             print_help();
             Ok(())
         }
@@ -123,6 +124,21 @@ fn doctor() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+fn launch_ui() -> Result<(), Box<dyn Error>> {
+    let native_options = eframe::NativeOptions {
+        viewport: eframe::egui::ViewportBuilder::default()
+            .with_inner_size([1280.0, 720.0])
+            .with_title("VegieBreak Studio"),
+        ..Default::default()
+    };
+    eframe::run_native(
+        "VegieBreak Studio",
+        native_options,
+        Box::new(|_cc| Ok(Box::new(VegieApp::default()))),
+    )
+    .map_err(|e| format!("UI launch failed (binary may be blocked by OS policy): {e}").into())
+}
+
 fn audio_devices() -> Result<(), Box<dyn Error>> {
     let devices = list_output_devices();
     println!("Detected output devices ({}):", devices.len());
@@ -145,6 +161,26 @@ fn create_project(path: PathBuf) -> Result<(), Box<dyn Error>> {
     project.save_to_path(&path)?;
     println!("created {} ({})", path.display(), project.name);
     Ok(())
+}
+
+use vb_ui::EguiShell;
+
+struct VegieApp {
+    shell: EguiShell,
+}
+
+impl Default for VegieApp {
+    fn default() -> Self {
+        Self {
+            shell: EguiShell::new(vb_ui::ShellState::from_project(&vb_core::Project::new("VegieBreak Studio"))),
+        }
+    }
+}
+
+impl eframe::App for VegieApp {
+    fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
+        self.shell.render_frame(ctx);
+    }
 }
 
 fn inspect_project(path: PathBuf) -> Result<(), Box<dyn Error>> {

@@ -25,6 +25,7 @@ thiserror = "2"
 tracing = "0.1"
 cpal = { version = "0.15" }
 egui = { version = "0.29", features = ["default"] }
+eframe = { version = "0.29", default-features = false, features = ["glow", "default_fonts"] }
 wgpu = { version = "0.21" }
 ort = { version = "2.0.0-rc.15", features = ["ndarray"] }
 symphonia = { version = "0.5", default-features = false, features = ["wav", "flac", "mp3", "ogg", "pcm"] }

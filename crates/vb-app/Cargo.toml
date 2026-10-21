@@ -19,3 +19,5 @@ vb-host = { path = "../vb-host" }
 vb-stems = { path = "../vb-stems" }
 vb-io = { path = "../vb-io" }
 serde_json.workspace = true
+vb-ui = { path = "../vb-ui" }
+eframe.workspace = true
