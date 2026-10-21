@@ -42,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Local GNU-host build fallback (`stable-x86_64-pc-windows-gnu` + MinGW-w64
   UCRT) because the Visual Studio Build Tools channel download failed; CI
   remains MSVC.
+- Published the initial repository and verification docs to
+  <https://github.com/cdnjmusic/VegieBreakDAW>.
 
 ### Security
 
