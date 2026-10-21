@@ -211,7 +211,8 @@ impl StemSeparator for DemucsOnnxSeparator {
             message: "loading ONNX model",
         });
 
-        use ort::{Environment, Session};
+        use ort::environment::Environment;
+        use ort::session::Session;
 
         let env = Environment::builder()
             .with_name("vegiebreak-stem")
