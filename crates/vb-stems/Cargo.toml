@@ -11,3 +11,4 @@ description = "Stem separation interface and HTDemucs model management for Vegie
 [dependencies]
 serde.workspace = true
 thiserror.workspace = true
+ort.workspace = true
