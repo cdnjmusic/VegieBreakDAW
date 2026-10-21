@@ -114,13 +114,9 @@ fn doctor() -> Result<(), Box<dyn Error>> {
         "  stem model:         {} {} ({})",
         DEFAULT_MODEL.name, DEFAULT_MODEL.version, DEFAULT_MODEL.license
     );
-    println!(
-        "  stem backend:       {}",
-        if stems.model_path().is_some() {
-            "model configured"
-        } else {
-            "interface only; model not configured"
-        }
+    println!("  stem backend:       {} ({})",
+        DEFAULT_MODEL.name,
+        if stems.model_path().is_some() { "model configured" } else { "interface only; model not configured" }
     );
     println!("  account required:   no");
     println!("  telemetry:          none");
