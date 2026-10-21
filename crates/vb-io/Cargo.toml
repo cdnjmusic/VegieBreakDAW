@@ -1,0 +1,14 @@
+[package]
+name = "vb-io"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "Project and media I/O for VegieBreakDAW"
+
+[dependencies]
+vb-core = { path = "../vb-core" }
+serde.workspace = true
+thiserror.workspace = true

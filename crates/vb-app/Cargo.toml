@@ -1,0 +1,21 @@
+[package]
+name = "vb-app"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "VegieBreakDAW application entry point and diagnostics"
+
+[[bin]]
+name = "vegiebreak"
+path = "src/main.rs"
+
+[dependencies]
+vb-core = { path = "../vb-core" }
+vb-audio = { path = "../vb-audio" }
+vb-host = { path = "../vb-host" }
+vb-stems = { path = "../vb-stems" }
+vb-io = { path = "../vb-io" }
+serde_json.workspace = true

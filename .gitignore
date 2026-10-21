@@ -1,0 +1,71 @@
+# Rust build output
+/target/
+**/target/
+**/*.rs.bk
+
+# Windows debug/build artifacts
+*.pdb
+*.ilk
+*.exp
+*.obj
+*.dmp
+*.user
+*.suo
+*.ncb
+*.sdf
+.vs/
+
+# IDE / editor state
+.idea/
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+
+# OS metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and crash dumps
+*.log
+/logs/
+/crashdumps/
+
+# Local secrets and machine-specific configuration
+.env
+.env.*
+!.env.example
+*.secret
+credentials.*
+/appsettings.local.json
+
+# Model and media caches. Keep small redistributable fixtures in testdata/.
+/models/
+/stems/
+/renders/
+/recordings/
+/analysis/private/
+/rea-evidence/private/
+.rea/
+
+# Large local audio and project files
+*.onnx
+*.wav
+*.flac
+*.aiff
+*.aif
+*.mp3
+*.ogg
+*.m4a
+*.flp
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.tgz
+
+# Installer output
+/dist/
+/installers/

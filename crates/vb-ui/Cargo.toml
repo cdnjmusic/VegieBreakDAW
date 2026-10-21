@@ -1,0 +1,13 @@
+[package]
+name = "vb-ui"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+description = "UI shell and theme primitives for VegieBreakDAW"
+
+[dependencies]
+vb-core = { path = "../vb-core" }
+serde.workspace = true
