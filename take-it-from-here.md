@@ -732,3 +732,5 @@ Phase 1 is done when a user can:
 
 Everything else is later. Do not optimize the piano roll before the audio path
 and stem extractor work.
+P h a s e   1   c o m p l e t e :   S t e p   5   i n t e g r a t i o n   t e s t   ( c o m m i t   9 1 0 f b b 1 ) .   A l l   5   s t e p s   p u s h e d .   B i n a r y   e x e c u t i o n   b l o c k e d   ( o s   e r r o r   4 5 5 1 ) ;   b u i l d / c h e c k   c l e a n .  
+ 
