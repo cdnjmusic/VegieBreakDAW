@@ -37,7 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - REA `6.7.0` MCP registration for DeepSeek Harness and the installed
   `reverse-engineer-anything` skill.
 - Ghidra `12.1.4` and Temurin JDK 21 analysis toolchain.
-- Verified Ghidra import and overview on a compiled PE smoke target.
+- Verified Ghidra import and overview on a compiled PE smoke target (145
+  procedures, 267 strings).
 - Local GNU-host build fallback (`stable-x86_64-pc-windows-gnu` + MinGW-w64
   UCRT) because the Visual Studio Build Tools channel download failed; CI
   remains MSVC.

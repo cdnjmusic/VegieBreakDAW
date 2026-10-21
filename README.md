@@ -103,7 +103,8 @@ The current machine has:
 - REA `6.7.0` with the `rea` MCP registration in `C:\Users\Potaku\.dsh\cordis.patch.yml`
 
 See [`docs/REA.md`](docs/REA.md) for the exact setup, verification commands, and
-analysis scope.
+analysis scope. The verified results are in
+[`docs/REA_VERIFICATION.md`](docs/REA_VERIFICATION.md).
 
 ## Roadmap
 
@@ -123,6 +124,7 @@ The full, versioned history is in [`CHANGELOG.md`](CHANGELOG.md). The short vers
 | Date | Change |
 | --- | --- |
 | 2026-10-21 | Bootstrap: Rust workspace, core project model, audio transport/null backend, plugin/stem/UI interfaces, CI, GPL-3.0 license, clean-room docs, REA + Ghidra setup, initial git commit. |
+| 2026-10-21 | Verified REA 6.7.0 MCP + Ghidra 12.1.4 end to end on a PE smoke target; FL Studio launcher accepted read-only. |
 
 ## License
 
