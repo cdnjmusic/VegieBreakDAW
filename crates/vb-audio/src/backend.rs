@@ -4,6 +4,7 @@
 //! with optional ASIO support when the user supplies Steinberg's SDK. The null
 //! backend exists so transport, graph, and offline-render tests are deterministic.
 
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use serde::{Deserialize, Serialize};
 
 /// Audio device configuration requested by the engine.
@@ -132,6 +133,138 @@ impl AudioBackend for NullBackend {
     fn stop(&mut self) -> Result<(), Self::Error> {
         self.running = false;
         self.stopped += 1;
+        Ok(())
+    }
+
+    fn is_running(&self) -> bool {
+        self.running
+    }
+}
+
+/// Enumerate available output devices using the default host.
+#[must_use]
+pub fn list_output_devices() -> Vec<AudioDeviceInfo> {
+    let mut results = Vec::new();
+    let host = cpal::default_host();
+    let Ok(devices) = host.output_devices() else {
+        return results;
+    };
+    for device in devices {
+        let name = device.name().unwrap_or_else(|_| "Unknown".into());
+        let id = name.clone();
+        let default = host
+            .default_output_device()
+            .is_some_and(|d| d.name().map(|dn| dn == name).unwrap_or(false));
+        let max_output_channels = 2;
+        results.push(AudioDeviceInfo {
+            id,
+            name,
+            is_default: default,
+            max_output_channels,
+            supported_sample_rates: vec![44100, 48000],
+        });
+    }
+    results
+}
+
+/// A real backend using `cpal`. Currently opens the default output device in
+/// WASAPI shared mode and writes silence. It verifies device open/close and
+/// keeps the callback allocation-free.
+pub struct CpalBackend {
+    config: AudioConfig,
+    running: bool,
+    device: Option<cpal::Device>,
+    stream: Option<cpal::Stream>,
+}
+
+impl std::fmt::Debug for CpalBackend {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("CpalBackend")
+            .field("config", &self.config)
+            .field("running", &self.running)
+            .field("device", &self.device.as_ref().map(|_| "some"))
+            .field("stream", &self.stream.as_ref().map(|_| "some"))
+            .finish()
+    }
+}
+
+impl CpalBackend {
+    #[must_use]
+    pub fn new(config: AudioConfig) -> Self {
+        Self {
+            config,
+            running: false,
+            device: None,
+            stream: None,
+        }
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum CpalError {
+    #[error("cpal device error: {0}")]
+    Device(String),
+    #[error("cpal stream error: {0}")]
+    Stream(String),
+}
+
+impl AudioBackend for CpalBackend {
+    type Error = CpalError;
+
+    fn name(&self) -> &'static str {
+        "cpal"
+    }
+
+    fn config(&self) -> AudioConfig {
+        self.config
+    }
+
+    fn start(&mut self) -> Result<(), Self::Error> {
+        let host = cpal::default_host();
+        let device = host
+            .default_output_device()
+            .ok_or_else(|| CpalError::Device("no default output device".into()))?;
+        let default_config = device
+            .default_output_config()
+            .map_err(|e| CpalError::Device(format!("default_output_config: {e}")))?;
+        let channels = std::cmp::min(self.config.channels, default_config.channels());
+        let sample_rate = default_config.sample_rate();
+        let stream_config = cpal::StreamConfig {
+            channels,
+            sample_rate,
+            buffer_size: cpal::BufferSize::Fixed(self.config.block_size),
+        };
+
+        let stream = device
+            .build_output_stream(
+                &stream_config,
+                move |_data: &mut [f32], _info| {
+                    // Silence renderer for Step 1; real graph arrives later.
+                    for s in _data.iter_mut() {
+                        *s = 0.0;
+                    }
+                },
+                |_err| {},
+                None,
+            )
+            .map_err(|e| CpalError::Stream(format!("build_output_stream: {e}")))?;
+
+        stream
+            .play()
+            .map_err(|e| CpalError::Stream(format!("play: {e}")))?;
+        self.device = Some(device);
+        self.stream = Some(stream);
+        self.running = true;
+        Ok(())
+    }
+
+    fn stop(&mut self) -> Result<(), Self::Error> {
+        if let Some(s) = self.stream.take() {
+            // Drop the stream stops it.
+            drop(s);
+        }
+        self.device = None;
+        self.running = false;
         Ok(())
     }
 

@@ -5,6 +5,9 @@ pub mod backend;
 pub mod engine;
 pub mod transport;
 
-pub use backend::{AudioBackend, AudioConfig, AudioDeviceInfo, NullBackend};
+pub use backend::{
+    AudioBackend, AudioConfig, AudioDeviceInfo, CpalBackend, CpalError, NullBackend,
+    list_output_devices,
+};
 pub use engine::{AudioEngine, AudioEngineStats};
 pub use transport::Transport;

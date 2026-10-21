@@ -12,3 +12,4 @@ description = "Audio device abstraction, transport, and graph scaffolding for Ve
 vb-core = { path = "../vb-core" }
 serde.workspace = true
 thiserror.workspace = true
+cpal.workspace = true

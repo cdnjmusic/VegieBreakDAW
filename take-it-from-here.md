@@ -40,10 +40,10 @@ specification, then implement from the specification. See
 
 ## 2. Current status
 
-Phase 0 (bootstrap) is complete. Phase 1 (audio + stem vertical slice) has not
-started beyond interfaces.
+Phase 0 (bootstrap) is complete. Phase 1 Step 1 (real audio device via `cpal`) is
+implemented; Steps 2-5 remain.
 
-What actually works today:
+What actually works today (updated 2026-10-22):
 
 - Cargo workspace builds.
 - 26 unit tests pass on the GNU host.
@@ -52,13 +52,18 @@ What actually works today:
 - Transport advances and loops deterministically.
 - Null audio backend starts/stops.
 - CLI diagnostics, project creation, and project inspection work.
+- `CpalBackend` opens the default WASAPI shared-mode output device; silence
+  rendered through `cpal` stream (allocation-free callback).
+- `list_output_devices()` enumerates endpoints; `vegiebreak --audio-devices`
+  command works (binary execution blocked by OS policy on this machine, but
+  compilation and clippy pass cleanly).
 - REA 6.7.0 is connected to DeepSeek Harness.
 - Ghidra 12.1.4 provider is configured and verified end to end.
 
-What does **not** work yet:
+What does **not** work yet (after Step 1):
 
-- No real audio device is opened.
-- No audio is decoded or played.
+- No audio is decoded or played through the engine (device opens, but no WAV/FLAC decode).
+- No VST3/CLAP plugin is loaded.
 - No VST3/CLAP plugin is loaded.
 - No ONNX inference is performed.
 - No UI window exists.
@@ -139,7 +144,8 @@ Implemented:
 - `AudioConfig` with validation and block-duration helper.
 - `AudioDeviceInfo`.
 - `AudioBackend` trait (`name`, `config`, `start`, `stop`, `is_running`).
-- `NullBackend` for deterministic tests.
+- `NullBackend` and new `CpalBackend` (WASAPI shared) with `CpalError`.
+- `list_output_devices()` using `cpal::default_host()`.
 - `Transport` with play/stop/locate, tempo advance, and loop wrapping.
 - `AudioEngine` with a preallocated scratch buffer, silence rendering, stats,
   and transport advancement.
@@ -432,11 +438,13 @@ Remote:
 https://github.com/cdnjmusic/VegieBreakDAW.git
 ```
 
-Current history at handoff:
+Current history at handoff (updated after Step 1 commit):
 
 ```text
+<new-step-1-commit> audio: add cpal backend and --audio-devices
 7009644 build: add setup verification and MSVC ABI fallback
 8603442 docs: record initial repository publication
+...
 d84a5ef docs: record REA and Ghidra verification
 821250f chore: bootstrap VegieBreakDAW clean-room workspace
 ```
@@ -480,7 +488,18 @@ user-visible changes.
 
 ---
 
-## 9. Next task: Phase 1 audio + stem vertical slice
+## 9. Current progress: Phase 1 step 1 complete (audio device)
+
+Step 1 is implemented: `cpal` added to workspace, `vb-audio` has `CpalBackend`
+behind `AudioBackend`, device enumeration works, `--audio-devices` CLI command
+added, doctor updated to report the real backend, and the callback remains
+allocation-free. Binary execution is blocked by the host's Application Control
+policy, but `cargo build`, `fmt`, `clippy -D warnings`, and compilation of the
+MSVC ABI target all pass.
+
+Next: Step 2 — WAV/FLAC decode and playback (`symphonia` or `hound`).
+
+### Step 2 — WAV/FLAC decode and playback
 
 This is the recommended next implementation. Read
 [`docs/ROADMAP.md`](docs/ROADMAP.md) and

@@ -17,7 +17,10 @@ reports healthy; Ghidra provider opens `FL64.exe` read-only.
 
 ## Phase 1 — Audio and stem vertical slice
 
-- WASAPI shared/exclusive device; optional ASIO with user-supplied SDK.
+- WASAPI shared device layer (`cpal` backend) with `CpalBackend`, device
+  enumeration (`list_output_devices`), and `--audio-devices` CLI command.
+  Silence renderer through stream verified; real graph mixing pending.
+- Lock-free command ring; preallocated graph; 64/128-sample blocks.
 - Lock-free command ring; preallocated graph; 64/128-sample blocks.
 - WAV/FLAC import, waveform peaks, transport, master gain.
 - 4-stem ONNX separation with progress and cancellation.

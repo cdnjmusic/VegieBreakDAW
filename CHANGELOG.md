@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
+- WASAPI shared device layer (`cpal` backend) with `CpalBackend`, device
+  enumeration (`list_output_devices`), and `--audio-devices` CLI command.
+- Real-time audio callback scaffold (silence renderer through cpal stream) with
+  allocation-free contract documented.
 - WASAPI/ASIO device layer and real-time audio callback.
 - WAV/FLAC playback and offline render.
 - Stem separation vertical slice with HTDemucs ONNX.

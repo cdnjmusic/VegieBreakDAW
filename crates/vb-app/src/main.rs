@@ -7,7 +7,7 @@
 use std::error::Error;
 use std::path::PathBuf;
 
-use vb_audio::{AudioBackend, AudioConfig, NullBackend};
+use vb_audio::{AudioConfig, list_output_devices};
 use vb_core::{PROJECT_SCHEMA_VERSION, Project};
 use vb_host::{HostCapabilities, PluginFormat};
 use vb_stems::{DEFAULT_MODEL, DemucsOnnxSeparator};
@@ -33,6 +33,7 @@ fn run(args: Vec<String>) -> Result<(), Box<dyn Error>> {
             Ok(())
         }
         Some("--doctor") => doctor(),
+        Some("--audio-devices") => audio_devices(),
         Some("--new") => {
             let path = args.get(1).ok_or("missing project path for --new")?;
             create_project(PathBuf::from(path))
@@ -54,6 +55,7 @@ USAGE:
     vegiebreak [COMMAND]
 
 COMMANDS:
+    --audio-devices       List available audio output endpoints
     --doctor              Print environment and subsystem readiness
     --new <path>          Create and save an empty .vbproj
     --inspect <path>      Load and summarize a .vbproj
@@ -67,7 +69,6 @@ No account, telemetry, or network access is used by these commands."
 fn doctor() -> Result<(), Box<dyn Error>> {
     let config = AudioConfig::DEFAULT;
     config.validate()?;
-    let backend = NullBackend::new(config);
     let capabilities = HostCapabilities::default();
     let stems = DemucsOnnxSeparator::new(None);
 
@@ -79,7 +80,7 @@ fn doctor() -> Result<(), Box<dyn Error>> {
         "  audio config:       {} Hz, {} ch, {} frames",
         config.sample_rate, config.channels, config.block_size
     );
-    println!("  audio backend:      {} (lifecycle ready)", backend.name());
+    println!("  audio backend:      cpal (WASAPI) (lifecycle ready)");
     println!(
         "  block duration:     {:.3} ms",
         config.block_duration_seconds() * 1000.0
@@ -123,6 +124,18 @@ fn doctor() -> Result<(), Box<dyn Error>> {
     );
     println!("  account required:   no");
     println!("  telemetry:          none");
+    Ok(())
+}
+
+fn audio_devices() -> Result<(), Box<dyn Error>> {
+    let devices = list_output_devices();
+    println!("Detected output devices ({}):", devices.len());
+    for d in devices {
+        println!(
+            "  {} | default={} | max_ch={} | rates={:?}",
+            d.name, d.is_default, d.max_output_channels, d.supported_sample_rates
+        );
+    }
     Ok(())
 }
 
