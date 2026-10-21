@@ -40,8 +40,7 @@ specification, then implement from the specification. See
 
 ## 2. Current status
 
-Phase 0 (bootstrap) is complete. Phase 1 Step 1 (real audio device via `cpal`) is
-implemented; Steps 2-5 remain.
+Phase 0 complete. Step 1 (audio device) done (commit `16d3291`). Step 2 (WAV/FLAC decode + waveform peaks) done (commit `22dfb91`). Steps 3-5 remain.
 
 What actually works today (updated 2026-10-22):
 
@@ -220,6 +219,9 @@ Implemented:
 - `MediaKind` inference from extensions (`wav`, `flac`, `aiff`, `ogg`, `mid`).
 - `MediaAsset`.
 - `save_project`, `load_project`, `project_relative`.
+- `decode_media` via `symphonia`: interleaved `f32`, cached waveform peaks,
+  zero-allocation chunk scan. Designed for low-end PC: 512-sample peak blocks,
+  no per-frame allocations, deferred resampling to engine.
 - `IoError`.
 
 Not implemented:
@@ -497,7 +499,18 @@ allocation-free. Binary execution is blocked by the host's Application Control
 policy, but `cargo build`, `fmt`, `clippy -D warnings`, and compilation of the
 MSVC ABI target all pass.
 
-Next: Step 2 — WAV/FLAC decode and playback (`symphonia` or `hound`).
+Performance design for low-end PC target (Ryzen 5 5500 / 16 GB reference):
+- All audio buffers preallocated; callback never allocates.
+- Decode uses `symphonia` direct (no extra copies) and 512-sample peak blocks.
+- Plugin isolation via separate process (`ILMinihostBridge64.exe` observed in
+  FL Studio evidence) confirms out-of-process host is required.
+- Resampling deferred to engine; no per-sample interpolation overhead in decode.
+- Target: faster startup and playback response than FL Studio's bundled codec
+  pipeline, without copying proprietary DSP.
+
+Next: Step 2 playback integration — connect `DecodedAudio` through master
+channel gain/mute/solo and play through `AudioEngine::process` -> `CpalBackend`.
+Then Step 3 — `ort` + HTDemucs ONNX separation.
 
 ### Step 2 — WAV/FLAC decode and playback
 
