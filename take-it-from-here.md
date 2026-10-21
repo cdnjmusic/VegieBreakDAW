@@ -1,12 +1,14 @@
 # Take It From Here
 
-**Project:** VegieBreakDAW  
-**Repository:** <https://github.com/cdnjmusic/VegieBreakDAW>  
-**Local path:** `C:\Users\Potaku\Documents\REA_FL`  
-**Branch:** `main`  
-**Last code commit before this handoff:** `7009644`  
-**License:** GPL-3.0-or-later  
-**Handoff date:** 2026-10-21
+| Field | Value |
+| --- | --- |
+| Project | VegieBreakDAW |
+| Repository | <https://github.com/cdnjmusic/VegieBreakDAW> |
+| Local path | `C:\Users\Potaku\Documents\REA_FL` |
+| Branch | `main` |
+| Baseline code commit | `7009644` (handoff docs are subsequent commits) |
+| License | GPL-3.0-or-later |
+| Handoff date | 2026-10-21 |
 
 This document is the working memory for the next agent or human. Read it before
 changing code. It records what is real, what is stubbed, how the machine is
