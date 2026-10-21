@@ -1,5 +1,6 @@
 # Rust build output
 /target/
+/target-msvc/
 **/target/
 **/*.rs.bk
 

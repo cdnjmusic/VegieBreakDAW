@@ -57,12 +57,33 @@ its channel catalog, so the workspace is currently verified with
 Both hosts compile the same crates; native plugin SDKs may still require MSVC
 later.
 
+### MSVC ABI without Visual Studio
+
+A portable MSVC ABI path is available now:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\build-msvc.ps1 -Test
+```
+
+It uses LLVM's `clang-cl`/`lld-link`, the portable MSVC CRT downloaded by
+`cargo-xwin`, and the installed Windows SDK. It builds and tests the entire
+workspace for `x86_64-pc-windows-msvc` without a Visual Studio installation.
+This is a workaround for the broken VS installer catalog, not a replacement for
+the full Build Tools installation when native SDKs need the complete MSVC
+toolset. See [`docs/TOOLCHAIN.md`](docs/TOOLCHAIN.md) for the full matrix.
+
 ### Build and test
 
 ```powershell
 cargo build --workspace
 cargo test --workspace
 cargo run -p vb-app -- --doctor
+```
+
+Verify the development and analysis toolchain without changing anything:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\verify-setup.ps1
 ```
 
 Create a project without opening a UI:
@@ -126,6 +147,7 @@ The full, versioned history is in [`CHANGELOG.md`](CHANGELOG.md). The short vers
 | 2026-10-21 | Bootstrap: Rust workspace, core project model, audio transport/null backend, plugin/stem/UI interfaces, CI, GPL-3.0 license, clean-room docs, REA + Ghidra setup, initial git commit. |
 | 2026-10-21 | Verified REA 6.7.0 MCP + Ghidra 12.1.4 end to end on a PE smoke target; FL Studio launcher accepted read-only. |
 | 2026-10-21 | Published the initial repository and verification docs to GitHub (`cdnjmusic/VegieBreakDAW`). |
+| 2026-10-21 | Added read-only setup verification and a working MSVC ABI build path via LLVM + portable CRT + Windows SDK. |
 
 ## License
 

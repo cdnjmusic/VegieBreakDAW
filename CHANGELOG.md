@@ -42,6 +42,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Local GNU-host build fallback (`stable-x86_64-pc-windows-gnu` + MinGW-w64
   UCRT) because the Visual Studio Build Tools channel download failed; CI
   remains MSVC.
+- Installed LLVM 23.1.4 and Windows SDK 10.0.26100 for an independent MSVC ABI
+  link path.
+- Added `scripts/verify-setup.ps1` for read-only toolchain verification.
+- Added `scripts/build-msvc.ps1`, which builds and tests the workspace for
+  `x86_64-pc-windows-msvc` using LLVM `lld-link`, the portable MSVC CRT, and
+  the Windows SDK.
+- Verified `cargo test --workspace --target x86_64-pc-windows-msvc` and the
+  MSVC-built `vegiebreak.exe` CLI.
 - Published the initial repository and verification docs to
   <https://github.com/cdnjmusic/VegieBreakDAW>.
 
