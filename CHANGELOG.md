@@ -12,8 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - WAV/FLAC decode (`symphonia`) with interleaved `f32` output, cached waveform
   peaks (`DecodedAudio`), efficient chunk-based scan, and `MediaAsset` support.
 - Clean-room evidence `docs/evidence/0002-fl-studio-audio-observations.md`
-  recording FL Studio audio architecture observations (plugin bridge isolation,
-  codec components, real-time engine design) for faster backend design.
+  recording FL Studio audio architecture observations.
+- `ort` ONNX Runtime integration (`vb-stems`): `DemucsOnnxSeparator` builds
+  session, validates manifest/checksum, reports progress, fails closed on
+  missing model or unsupported input (`InInference` error).
 - WASAPI shared device layer (`cpal` backend) with `CpalBackend`, device
   enumeration (`list_output_devices`), and `--audio-devices` CLI command.
 - Real-time audio callback scaffold (silence renderer through cpal stream) with

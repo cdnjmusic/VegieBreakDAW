@@ -40,7 +40,7 @@ specification, then implement from the specification. See
 
 ## 2. Current status
 
-Phase 0 complete. Step 1 (audio device) done (commit `16d3291`). Step 2 (WAV/FLAC decode + waveform peaks) done (commit `22dfb91`). Steps 3-5 remain.
+Phase 0 complete. Step 1 (audio device) done. Step 2 (decode/peaks) done. Step 3 (ONNX stem separation interface) done. Step 4 (UI) pending. Step 5 (integration) pending.
 
 What actually works today (updated 2026-10-22):
 
