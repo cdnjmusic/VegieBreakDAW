@@ -118,6 +118,9 @@ impl Shell for NullShell {
     }
 }
 
+pub mod egui_shell;
+pub use egui_shell::EguiShell;
+
 #[cfg(test)]
 mod tests {
     use super::*;

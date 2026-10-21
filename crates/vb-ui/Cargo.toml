@@ -11,3 +11,4 @@ description = "UI shell and theme primitives for VegieBreakDAW"
 [dependencies]
 vb-core = { path = "../vb-core" }
 serde.workspace = true
+egui = { version = "0.29", features = ["default"] }
