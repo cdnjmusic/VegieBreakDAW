@@ -29,6 +29,10 @@ Phase 0 is complete: the Rust workspace, analysis toolchain, and repository are
 bootstrapped. The audio engine, plugin host, and stem extractor currently expose
 interfaces and validation scaffolding; they are not yet production components.
 
+**Picking this up later?** Read [`take-it-from-here.md`](take-it-from-here.md) first.
+It records the exact machine state, verified commands, known blockers, and the
+Phase 1 implementation plan.
+
 | Area | Status |
 | --- | --- |
 | Rust workspace and CI | ✅ scaffolded |
@@ -37,7 +41,7 @@ interfaces and validation scaffolding; they are not yet production components.
 | WASAPI/ASIO device layer | ⏳ planned for Phase 1 |
 | VST3/CLAP hosting | ⏳ interface only; Phase 3 |
 | AAX hosting | ⛔ optional, requires Avid SDK |
-| Stem separation | ⏳ interface + model manifest; Phase 2 |
+| Stem separation | ⏳ interface + model manifest; Phase 1 |
 | Built-in original devices | ⏳ Phase 5 |
 | UI shell | ⏳ Phase 1 |
 
@@ -148,6 +152,7 @@ The full, versioned history is in [`CHANGELOG.md`](CHANGELOG.md). The short vers
 | 2026-10-21 | Verified REA 6.7.0 MCP + Ghidra 12.1.4 end to end on a PE smoke target; FL Studio launcher accepted read-only. |
 | 2026-10-21 | Published the initial repository and verification docs to GitHub (`cdnjmusic/VegieBreakDAW`). |
 | 2026-10-21 | Added read-only setup verification and a working MSVC ABI build path via LLVM + portable CRT + Windows SDK. |
+| 2026-10-21 | Added [`take-it-from-here.md`](take-it-from-here.md) with the full handoff, machine state, and Phase 1 plan. |
 
 ## License
 

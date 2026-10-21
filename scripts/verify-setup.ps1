@@ -6,7 +6,7 @@
     Read-only checks for Git, Rust, a C toolchain, CMake, Ninja, JDK, Ghidra,
     and the REA MCP registration. Does not install or modify anything.
 .EXAMPLE
-    pwsh -File scripts/verify-setup.ps1
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\verify-setup.ps1
 #>
 [CmdletBinding()]
 param(

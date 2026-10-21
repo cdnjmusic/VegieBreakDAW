@@ -52,6 +52,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   MSVC-built `vegiebreak.exe` CLI.
 - Published the initial repository and verification docs to
   <https://github.com/cdnjmusic/VegieBreakDAW>.
+- Added [`take-it-from-here.md`](take-it-from-here.md) with the complete
+  handoff, machine/toolchain state, verified commands, known blockers, and the
+  Phase 1 audio + stem implementation plan.
 
 ### Security
 

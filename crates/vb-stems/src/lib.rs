@@ -153,7 +153,7 @@ pub trait StemSeparator {
     ) -> Result<StemSet, Self::Error>;
 }
 
-/// The ONNX-backed separator is implemented in Phase 2.
+/// The ONNX-backed separator is implemented in Phase 1.
 ///
 /// Keeping the type here lets the rest of the application depend on the final
 /// interface now. It deliberately fails closed rather than silently returning
