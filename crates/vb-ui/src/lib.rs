@@ -61,15 +61,17 @@ pub struct Theme {
 
 impl Default for Theme {
     fn default() -> Self {
+        // Original VegieBreak Studio dark palette (from images/VegieBreak_Studio_Color_Scheme.md).
+        // Takes FL Studio dark workflow inspiration independently.
         Self {
-            name: "Vegie Dark".to_owned(),
-            background: [18, 20, 24],
-            panel: [28, 32, 38],
-            accent: [126, 196, 108],
-            text: [232, 236, 240],
-            muted_text: [148, 156, 166],
-            waveform: [112, 180, 220],
-            playhead: [242, 196, 90],
+            name: "Vegie Break Studio".to_owned(),
+            background: [16, 16, 24],    // #101018 Midnight Charcoal
+            panel: [28, 28, 41],        // #1C1C29
+            accent: [200, 255, 56],     // #C8FF38 Electric lime
+            text: [244, 240, 232],      // #F4F0E8 Warm off-white
+            muted_text: [169, 162, 183], // #A9A2B7
+            waveform: [53, 223, 255],   // #35DFFF Electric cyan
+            playhead: [255, 75, 145],   // #FF4B91 Hot pink
         }
     }
 }
