@@ -12,3 +12,4 @@ description = "Project and media I/O for VegieBreakDAW"
 vb-core = { path = "../vb-core" }
 serde.workspace = true
 thiserror.workspace = true
+symphonia.workspace = true

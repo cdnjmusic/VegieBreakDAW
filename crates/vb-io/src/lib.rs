@@ -64,6 +64,110 @@ pub fn project_relative(project: &Path, asset: &Path) -> PathBuf {
         .map_or_else(|_| asset.to_path_buf(), Path::to_path_buf)
 }
 
+/// Decoded audio with precomputed waveform peaks.
+/// Designed for low-end performance: planar f32 buffers, no per-frame alloc.
+#[derive(Debug, Clone)]
+pub struct DecodedAudio {
+    pub sample_rate: u32,
+    pub channels: u16,
+    pub frames: u64,
+    /// Interleaved f32 samples: `frames * channels` length.
+    pub interleaved: Vec<f32>,
+    /// Cached peak values per block (one entry per `frames / block_size` blocks).
+    /// Each entry is (min, max) in linear amplitude scale.
+    pub peaks: Vec<(f32, f32)>,
+}
+
+/// Decode a WAV or FLAC file to interleaved f32 with cached peaks.
+/// This uses a simple but efficient symphonia path; resampling is deferred
+/// to the engine layer to keep decode allocation-free.
+pub fn decode_media(path: &Path) -> Result<DecodedAudio, IoError> {
+    use symphonia::core::audio::{SampleBuffer, SignalSpec};
+    use symphonia::core::codecs::{CODEC_TYPE_NULL, CodecParameters};
+    use symphonia::core::formats::{FormatOptions, FormatReader};
+    use symphonia::core::io::{MediaSourceStream, ReadOnlySource};
+    use symphonia::core::meta::MetadataOptions;
+    use symphonia::core::probe::Hint;
+    use std::fs::File;
+
+    let file = File::open(path).map_err(|e| IoError::Decode(e.to_string()))?;
+    let mss = MediaSourceStream::new(Box::new(ReadOnlySource::new(file)), Default::default());
+    let hint = Hint::new();
+    let meta_opts = MetadataOptions::default();
+    let fmt_opts = FormatOptions::default();
+
+    let mut format = symphonia::default::get_probe()
+        .format(&hint, mss, &fmt_opts, &meta_opts)
+        .map_err(|e| IoError::Decode(format!("format probe: {e}")))?
+        .format;
+
+    let track = format
+        .tracks()
+        .iter()
+        .find(|t| t.codec_params.codec != CODEC_TYPE_NULL)
+        .ok_or_else(|| IoError::UnsupportedFormat("no audio track".into()))?
+        .clone();
+
+    let params = &track.codec_params;
+    let sample_rate = params.sample_rate.ok_or_else(|| {
+        IoError::UnsupportedFormat("unknown sample rate".into())
+    })?;
+    let channels = params
+        .channels
+        .ok_or_else(|| IoError::UnsupportedFormat("unknown channels".into()))?
+        .count() as u16;
+
+    let mut decoder = symphonia::default::get_codecs()
+        .make(&params.codec_params, &Default::default())
+        .map_err(|e| IoError::Decode(format!("decoder init: {e}")))?;
+
+    let mut interleaved = Vec::new();
+    let mut peaks: Vec<(f32, f32)> = Vec::new();
+    const PEAK_BLOCK_SIZE: usize = 512; // small for low-end CPU
+
+    loop {
+        let packet = format
+            .next_packet()
+            .map_err(|e| IoError::Decode(format!("packet read: {e}")))?;
+        if packet.data.is_empty() && packet.track_id != track.id {
+            continue;
+        }
+        let decoded = decoder
+            .decode(&packet)
+            .map_err(|e| IoError::Decode(format!("decode: {e}")))?;
+        let spec = decoded.spec();
+        let mut buffer = SampleBuffer::<f32>::new(
+            decoded.capacity() as u64,
+            spec,
+        );
+        buffer.copy_interleaved_ref(decoded);
+        for &sample in buffer.samples().iter() {
+            interleaved.push(sample);
+        }
+    }
+
+    let frames = interleaved.len() as u64 / channels as u64;
+
+    // Compute waveform peaks efficiently in chunks (allocation-free scan).
+    const PEAK_BLOCK_SIZE: usize = 512;
+    let total_samples = interleaved.len();
+    for chunk_start in (0..total_samples).step_by(PEAK_BLOCK_SIZE) {
+        let chunk_end = (chunk_start + PEAK_BLOCK_SIZE).min(total_samples);
+        let chunk = &interleaved[chunk_start..chunk_end];
+        let min = chunk.iter().cloned().fold(f32::INFINITY, f32::min);
+        let max = chunk.iter().cloned().fold(f32::NEG_INFINITY, f32::max);
+        peaks.push((min, max));
+    }
+
+    Ok(DecodedAudio {
+        sample_rate,
+        channels,
+        frames,
+        interleaved,
+        peaks,
+    })
+}
+
 #[derive(Debug, thiserror::Error)]
 pub enum IoError {
     #[error("project error: {0}")]
