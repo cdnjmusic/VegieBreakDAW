@@ -64,8 +64,8 @@ impl Default for HostCapabilities {
     fn default() -> Self {
         Self {
             formats: vec![PluginFormat::Vst3, PluginFormat::Clap],
-            out_of_process: false,
-            sandboxed_scan: false,
+            out_of_process: true,
+            sandboxed_scan: true,
         }
     }
 }
@@ -96,6 +96,14 @@ pub trait PluginHost {
     fn scan(&mut self, paths: &[PathBuf]) -> Result<ScanReport, Self::Error>;
     fn load(&mut self, descriptor: &PluginDescriptor) -> Result<(), Self::Error>;
     fn unload(&mut self, instance_id: &str) -> Result<(), Self::Error>;
+}
+
+/// A persistent plugin scan cache entry (simplified for Phase 3).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PluginCacheEntry {
+    pub descriptor_digest: String,
+    pub last_scanned: String,
+    pub valid: bool,
 }
 
 /// A host that reports capabilities but does not load plugins yet.
