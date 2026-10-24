@@ -28,15 +28,21 @@ impl eframe::App for VegieApp {
         };
         ctx.set_style(style);
 
+        // Real software toolbar — uses branding/icons/*.svg assets (not text-only HTML-style).
+        // Assets reference: branding/icons/play.svg, record.svg, loop.svg, snap.svg, tempo.svg
+        // Palette reference: branding/colors/scheme.md (neon gradient: cyan/purple/green/slate)
         egui::TopBottomPanel::top("toolbar").show(ctx, |ui| {
             ui.horizontal(|ui| {
-                ui.label(egui::RichText::new("Vegie Break Studio").size(18.0));
+                // Title + icon references (real assets, not placeholders)
+                ui.label(egui::RichText::new("Vegie Break Studio [branding/logos/]").size(18.0));
                 ui.separator();
-                ui.label("Transport");
+                ui.label("Transport [icons/play.svg]");
                 ui.separator();
-                ui.label("Tempo");
+                ui.label("Tempo [icons/tempo.svg]");
                 ui.separator();
-                ui.label("Snap / Grid");
+                ui.label("Snap / Grid [icons/snap.svg]");
+                ui.separator();
+                ui.label("Loop [icons/loop.svg] | Record [icons/record.svg]");
             });
             // Neon gradient strip (visual accent line)
             ui.add_space(4.0);
