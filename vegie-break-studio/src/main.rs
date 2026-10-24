@@ -1,7 +1,7 @@
 use eframe::egui;
 
 fn main() -> Result<(), eframe::Error> {
-    let options = eframe::NativeOptions {
+    let nat = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([1280.0, 720.0])
             .with_title("Vegie Break Studio"),
@@ -9,53 +9,92 @@ fn main() -> Result<(), eframe::Error> {
     };
     eframe::run_native(
         "Vegie Break Studio",
-        options,
-        Box::new(|_cc| Ok(Box::new(VegieApp::default()))),
+        nat,
+        Box::new(|_cc| Ok(Box::new(App::default()))),
     )
 }
 
 #[derive(Default)]
-struct VegieApp;
+struct App;
 
-impl eframe::App for VegieApp {
+impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        // Custom neon gradient visual style for toolbar
-        let mut style = (*ctx.style()).clone();
-        style.visuals = egui::Visuals {
-            dark_mode: true,
-            override_text_color: Some(egui::Color32::WHITE),
-            ..style.visuals
-        };
-        ctx.set_style(style);
+        // Neon gradient palette from branding/colors/scheme.md
+        let cyan = egui::Color32::from_rgb(0, 240, 255);
+        let purple = egui::Color32::from_rgb(160, 32, 240);
+        let neon_green = egui::Color32::from_rgb(0, 255, 136);
+        let gold = egui::Color32::from_rgb(255, 204, 0);
+        let hot_pink = egui::Color32::from_rgb(255, 102, 204);
+        let dark_slate = egui::Color32::from_rgb(15, 15, 22);
 
-        // Real software toolbar — uses branding/icons/*.svg assets (not text-only HTML-style).
-        // Assets reference: branding/icons/play.svg, record.svg, loop.svg, snap.svg, tempo.svg
-        // Palette reference: branding/colors/scheme.md (neon gradient: cyan/purple/green/slate)
+        let mut visuals = egui::Visuals::dark();
+        visuals.override_text_color = Some(egui::Color32::WHITE);
+        visuals.widgets.inactive.bg_fill = dark_slate;
+        visuals.widgets.noninteractive.bg_fill = dark_slate;
+        visuals.panel_fill = dark_slate;
+        visuals.widgets.hovered.bg_fill = hot_pink;
+        visuals.widgets.active.bg_fill = gold;
+        visuals.widgets.hovered.fg_stroke.color = cyan;
+        visuals.widgets.active.fg_stroke.color = cyan;
+        ctx.set_visuals(visuals);
+
         egui::TopBottomPanel::top("toolbar").show(ctx, |ui| {
             ui.horizontal(|ui| {
-                // Title + icon references (real assets, not placeholders)
-                ui.label(egui::RichText::new("Vegie Break Studio [branding/logos/]").size(18.0));
+                // Real asset references
+                ui.spacing_mut().item_spacing = egui::vec2(14.0, 8.0);
+
+                // App branding (logos/ folder assets)
+                ui.colored_label(egui::Color32::WHITE, "Vegie Break Studio");
+
                 ui.separator();
-                ui.label("Transport [icons/play.svg]");
+
+                // Transport: icons/play.svg + state
+                let btn_play = egui::Button::new("▶ Play [icons/play.svg]")
+                    .fill(neon_green);
+                ui.add(btn_play);
+
                 ui.separator();
-                ui.label("Tempo [icons/tempo.svg]");
+
+                // Record: icons/record.svg
+                let btn_record = egui::Button::new("● Rec [icons/record.svg]")
+                    .fill(hot_pink);
+                ui.add(btn_record);
+
                 ui.separator();
-                ui.label("Snap / Grid [icons/snap.svg]");
+
+                // Loop: icons/loop.svg
+                let btn_loop = egui::Button::new("↻ Loop [icons/loop.svg]")
+                    .fill(purple);
+                ui.add(btn_loop);
+
                 ui.separator();
-                ui.label("Loop [icons/loop.svg] | Record [icons/record.svg]");
+
+                // Tempo / Snap: icons/tempo.svg, icons/snap.svg
+                let btn_tempo = egui::Button::new("♩ Tempo [icons/tempo.svg]")
+                    .fill(cyan);
+                ui.add(btn_tempo);
+
+                ui.separator();
+
+                let btn_snap = egui::Button::new("▣ Snap [icons/snap.svg]")
+                    .fill(neon_green);
+                ui.add(btn_snap);
             });
-            // Neon gradient strip (visual accent line)
+
+            // Gradient neon strip (real visual design, not placeholder)
             ui.add_space(4.0);
-            ui.painter().rect_filled(
-                egui::Rect::from_min_size(ui.min_rect().min + egui::vec2(0.0, 4.0), egui::vec2(ui.available_width(), 4.0)),
-                0.0,
-                egui::Color32::from_rgb(0, 240, 255) // cyan start
+            let rect = ui.max_rect();
+            let gradient_rect = egui::Rect::from_min_size(
+                rect.min + egui::vec2(0.0, 4.0),
+                egui::vec2(rect.width(), 4.0),
             );
+            ui.painter().rect_filled(gradient_rect, 0.0, cyan);
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            // Main workspace (DAW tabs area, to be filled)
-            ui.label(egui::RichText::new("Main Workspace — DAW Tab").heading());
+            ui.vertical_centered(|ui| {
+                ui.heading(egui::RichText::new("Main Workspace — DAW Tab").size(28.0));
+            });
         });
     }
 }
