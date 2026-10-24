@@ -1,5 +1,6 @@
 use eframe::egui;
 mod control_bar;
+mod icons;
 
 fn main() -> Result<(), eframe::Error> {
     let nat = eframe::NativeOptions {
@@ -16,16 +17,13 @@ fn main() -> Result<(), eframe::Error> {
 }
 
 #[derive(Default)]
-struct App;
+struct App {
+    control_bar: control_bar::ControlBar,
+}
 
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        // Neon gradient palette from branding/colors/scheme.md
-        let cyan = egui::Color32::from_rgb(0, 240, 255);
-        let purple = egui::Color32::from_rgb(160, 32, 240);
-        let neon_green = egui::Color32::from_rgb(0, 255, 136);
-        let gold = egui::Color32::from_rgb(255, 204, 0);
-        let hot_pink = egui::Color32::from_rgb(255, 102, 204);
+        // Brand colors from branding/colors/scheme.md
         let dark_slate = egui::Color32::from_rgb(15, 15, 22);
 
         let mut visuals = egui::Visuals::dark();
@@ -33,14 +31,14 @@ impl eframe::App for App {
         visuals.widgets.inactive.bg_fill = dark_slate;
         visuals.widgets.noninteractive.bg_fill = dark_slate;
         visuals.panel_fill = dark_slate;
-        visuals.widgets.hovered.bg_fill = hot_pink;
-        visuals.widgets.active.bg_fill = gold;
-        visuals.widgets.hovered.fg_stroke.color = cyan;
-        visuals.widgets.active.fg_stroke.color = cyan;
+        visuals.widgets.hovered.bg_fill = egui::Color32::from_rgb(255, 102, 204); // hot pink
+        visuals.widgets.active.bg_fill = egui::Color32::from_rgb(255, 204, 0); // gold
+        visuals.widgets.hovered.fg_stroke.color = egui::Color32::from_rgb(0, 240, 255); // cyan
+        visuals.widgets.active.fg_stroke.color = egui::Color32::from_rgb(0, 240, 255);
         ctx.set_visuals(visuals);
 
         egui::TopBottomPanel::top("toolbar").show_separator_line(false).show(ctx, |ui| {
-            control_bar::ControlBar::show(ctx, ui);
+            self.control_bar.show(ctx, ui);
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
