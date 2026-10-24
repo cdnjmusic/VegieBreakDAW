@@ -1,4 +1,5 @@
 use eframe::egui;
+mod control_bar;
 
 fn main() -> Result<(), eframe::Error> {
     let nat = eframe::NativeOptions {
@@ -38,41 +39,8 @@ impl eframe::App for App {
         visuals.widgets.active.fg_stroke.color = cyan;
         ctx.set_visuals(visuals);
 
-        egui::TopBottomPanel::top("toolbar").show(ctx, |ui| {
-            ui.horizontal(|ui| {
-                // Real asset references
-                ui.spacing_mut().item_spacing = egui::vec2(14.0, 8.0);
-
-                // App branding: logos/app_icon_logo.png
-                ui.colored_label(egui::Color32::WHITE, "Vegie Break Studio");
-
-                ui.separator();
-
-                // Transport controls — real assets from branding/icons/
-                let btn_play = egui::Button::new("Play").fill(neon_green);
-                ui.add(btn_play);
-
-                let btn_record = egui::Button::new("Record").fill(hot_pink);
-                ui.add(btn_record);
-
-                let btn_loop = egui::Button::new("Loop").fill(purple);
-                ui.add(btn_loop);
-
-                ui.separator();
-
-                let btn_tempo = egui::Button::new("Tempo").fill(cyan);
-                ui.add(btn_tempo);
-
-                let btn_snap = egui::Button::new("Snap").fill(neon_green);
-                ui.add(btn_snap);
-            });
-
-            // Clean subtle divider line (not an ugly thick strip)
-            ui.add_space(2.0);
-            ui.painter().line_segment(
-                [ui.min_rect().left_top(), ui.min_rect().right_top()],
-                (0.5, cyan),
-            );
+        egui::TopBottomPanel::top("toolbar").show_separator_line(false).show(ctx, |ui| {
+            control_bar::ControlBar::show(ctx, ui);
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
