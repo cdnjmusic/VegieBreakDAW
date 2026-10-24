@@ -51,7 +51,8 @@ Data flow: `main()` creates `EventLoop` and `App`. `App::update()` calls `contro
 
 Implemented (verified by code inspection and build):
 - `egui` / `eframe` window (1280x720, title "Vegie Break Studio")
-- `control_bar.rs`: top toolbar with Play, Record, Loop, Tempo, Snap buttons; interactive hover (`hot_pink`) / active (`gold`) states; clean divider line; branding label
+- `control_bar.rs`: Logic Pro X-inspired control bar with real SVG icons rendered via egui::Painter (icons.rs module), LCD-style musical position/tempo/time-signature/key display, transport group (Stop, Play, Record, Cycle), metronome/count-in controls, right-side view/editor buttons
+- `icons.rs`: Minimal SVG-to-Painter renderer (rect, circle, polygon, path, line elements) — no external dependency needed
 - `branding/colors/scheme.md`: neon gradient palette (cyan `#00f0ff`, purple `#a020f0`, neon green `#00ff88`, gold `#ffcc00`, hot pink `#ff66cc`, slate `#0f0f16`)
 - `branding/icons/*.svg`: 5 transport icons (play, record, loop, snap, tempo)
 - `references/`: Logic Pro and FL Studio references
@@ -59,11 +60,12 @@ Implemented (verified by code inspection and build):
 - `AGENT_HANDOFF.md` and `TASKS.json` (this file and the JSON file) maintained as persistent tracking
 
 Not fully implemented / needs verification:
-- Real SVG icons are not rendered as image widgets in `egui`; buttons use text labels referencing the SVG assets (`branding/icons/*.svg`)
-- The toolbar does not yet load the PNG logos (`branding/logos/*.png`)
-- Transport controls (Play/Record/Loop/Tempo/Snap) are not connected to actual audio/transport state; buttons are visual-only
-- Video backend (`backend/video/`) and scoring/live tabs (`backend/tabs/`) are spec files only
-- No tests or automated verification beyond `cargo build --release`
+- PDF reference files (`references/logic-pro/*.pdf`) could not be read — model does not support PDF input, no pdftotext available. Control bar layout based on general Logic Pro X interface knowledge + SVG icon assets.
+- Transport controls (Play/Record/Cycle/Metronome/Count-in) are visual-only (buttons respond to clicks but no audio engine connected yet); stop button uses "snap.svg" as placeholder since no stop SVG exists yet
+- Toolbar does not yet load the PNG logos (`branding/logos/*.png`) as the app icon
+- No automated test suite; verification relies on manual `cargo build --release` and visual inspection of `.exe` output
+- `.kilo/command/doctor-check.md` and `.kilo/agent/doctor.md` configured for health-check agent but not actively tested in CI
+- `rea/` is excluded by `.gitignore`; ensure nothing from it leaks into commits
 
 ---
 
