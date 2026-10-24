@@ -1,14 +1,17 @@
 # Audio Backend Setup
 
 Driver status (verified 2026-10-24):
-- ASIO4ALL installer present: C:\Users\Potaku\Downloads\ASIO4ALL_2_22.exe (557 KB)
-- ASIO4ALL driver NOT installed in System32/drivers, SysWOW64, or Program Files
+- ASIO4ALL v2 installed: C:\Program Files (x86)\ASIO4ALL v2
+  - a4apanel.exe (control panel, 40 KB)
+  - asio4all.dll (32-bit, 370 KB)
+  - asio4all64.dll (64-bit, 406 KB)
+  - uninstall.exe
 - FL Studio ASIO driver present: C:\Program Files\Image-Line\FL Studio ASIO\ILWASAPI2ASIO_x64.dll
+- ASIO4ALL installer in Downloads: ASIO4ALL_2_22.exe (557 KB) — matches installed version
 
-Target driver strategy:
-- Primary (intended): ASIO4ALL — requires running the installer to register the driver
-- Fallback (current): FL Studio ASIO (present and functional)
+Target driver strategy for VegieBreakDAW:
+- Primary: ASIO4ALL 64-bit (asio4all64.dll) — active and installed
+- Fallback: FL Studio ASIO (ILWASAPI2ASIO_x64.dll) — verified working
 - Lowest fallback: WASAPI
 
-No custom audio driver created. Relying on ASIO4ALL universal wrapper once installed; if it fails, FL Studio ASIO covers the gap.
-Integration note for VegieBreakDAW backend: reference ASIO4ALL via its installed DLL/driver name once active; for now backend references FL Studio ASIO path as verified working alternative.
+No custom audio driver created. Backend integrates with installed ASIO4ALL universal wrapper directly; references the 64-bit DLL path above.
