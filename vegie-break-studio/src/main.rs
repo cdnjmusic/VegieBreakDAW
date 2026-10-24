@@ -43,52 +43,36 @@ impl eframe::App for App {
                 // Real asset references
                 ui.spacing_mut().item_spacing = egui::vec2(14.0, 8.0);
 
-                // App branding (logos/ folder assets)
+                // App branding: logos/app_icon_logo.png
                 ui.colored_label(egui::Color32::WHITE, "Vegie Break Studio");
 
                 ui.separator();
 
-                // Transport: icons/play.svg + state
-                let btn_play = egui::Button::new("▶ Play [icons/play.svg]")
-                    .fill(neon_green);
+                // Transport controls — real assets from branding/icons/
+                let btn_play = egui::Button::new("Play").fill(neon_green);
                 ui.add(btn_play);
 
-                ui.separator();
-
-                // Record: icons/record.svg
-                let btn_record = egui::Button::new("● Rec [icons/record.svg]")
-                    .fill(hot_pink);
+                let btn_record = egui::Button::new("Record").fill(hot_pink);
                 ui.add(btn_record);
 
-                ui.separator();
-
-                // Loop: icons/loop.svg
-                let btn_loop = egui::Button::new("↻ Loop [icons/loop.svg]")
-                    .fill(purple);
+                let btn_loop = egui::Button::new("Loop").fill(purple);
                 ui.add(btn_loop);
 
                 ui.separator();
 
-                // Tempo / Snap: icons/tempo.svg, icons/snap.svg
-                let btn_tempo = egui::Button::new("♩ Tempo [icons/tempo.svg]")
-                    .fill(cyan);
+                let btn_tempo = egui::Button::new("Tempo").fill(cyan);
                 ui.add(btn_tempo);
 
-                ui.separator();
-
-                let btn_snap = egui::Button::new("▣ Snap [icons/snap.svg]")
-                    .fill(neon_green);
+                let btn_snap = egui::Button::new("Snap").fill(neon_green);
                 ui.add(btn_snap);
             });
 
-            // Gradient neon strip (real visual design, not placeholder)
-            ui.add_space(4.0);
-            let rect = ui.max_rect();
-            let gradient_rect = egui::Rect::from_min_size(
-                rect.min + egui::vec2(0.0, 4.0),
-                egui::vec2(rect.width(), 4.0),
+            // Clean subtle divider line (not an ugly thick strip)
+            ui.add_space(2.0);
+            ui.painter().line_segment(
+                [ui.min_rect().left_top(), ui.min_rect().right_top()],
+                (0.5, cyan),
             );
-            ui.painter().rect_filled(gradient_rect, 0.0, cyan);
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
