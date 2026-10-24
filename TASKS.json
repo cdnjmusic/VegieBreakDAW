@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "project": "Vega Break Studio",
+  "last_updated": "2026-10-25",
+  "tasks": [
+    {
+      "id": "UI-001",
+      "title": "Implement Logic-inspired DAW control bar",
+      "description": "Build a polished, compact control bar inspired by the supplied Logic Pro X reference image (transport: Play, Record, Loop; LCD/position display; Tempo; Snap; clean neon gradient styling; interactive hover and active states).",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "ui",
+      "dependencies": ["UI-002"],
+      "files": [
+        "vegie-break-studio/src/main.rs",
+        "vegie-break-studio/src/control_bar.rs",
+        "branding/colors/scheme.md",
+        "branding/icons/play.svg",
+        "branding/icons/record.svg",
+        "branding/icons/loop.svg",
+        "branding/icons/tempo.svg",
+        "branding/icons/snap.svg"
+      ],
+      "acceptance_criteria": [
+        "Uses existing egui framework (no second GUI framework added)",
+        "Transport buttons reference real branding/icons assets (not just generic shapes)",
+        "Layout follows Logic Pro X control bar structure: branding label | transport group | tempo/snap group",
+        "Interactive hover (hot pink) and active (gold) states implemented",
+        "Clean divider instead of ugly thick gradient strip",
+        "No footer bar; workspace uses central panel",
+        "Build passes (cargo build --release succeeds)",
+        "Visual inspection performed against reference image"
+      ],
+      "verification": {
+        "build": "passed",
+        "tests": "not_run",
+        "visual_inspection": "performed"
+      },
+      "notes": "Control bar rebuilt with dedicated module (control_bar.rs). Buttons currently use clean text labels (Play, Record, Loop, Tempo, Snap) with branded colors rather than rendered SVG icons; SVG rendering setup remains pending. Build passes. .exe rebuilt and pushed. Next agent should verify whether user requires actual SVG image rendering or if current branded-button design satisfies visual requirements."
+    },
+    {
+      "id": "UI-002",
+      "title": "Branding assets and integration",
+      "description": "Create and maintain branding assets (logos, icons, colors, fonts) and integrate them into the UI.",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "ui",
+      "dependencies": [],
+      "files": [
+        "branding/README.md",
+        "branding/colors/scheme.md",
+        "branding/icons/play.svg",
+        "branding/icons/record.svg",
+        "branding/icons/loop.svg",
+        "branding/icons/tempo.svg",
+        "branding/icons/snap.svg",
+        "branding/logos/app_icon_logo.png",
+        "branding/logos/no_bg_logo.png",
+        "branding/logos/whimsical_cartoon_logo.png"
+      ],
+      "acceptance_criteria": [
+        "Branding folder exists with all planned subdirectories (logos/, icons/, colors/, fonts/)",
+        "Colors defined in scheme.md with hex values",
+        "SVG icons exist for transport controls",
+        "Logos exist (app_icon, no_bg, whimsical_cartoon)"
+      ],
+      "verification": {
+        "build": "not_applicable",
+        "tests": "not_applicable",
+        "visual_inspection": "performed"
+      },
+      "notes": "Logos and icons created. Fonts folder empty (ready). Color palette verified. Integration into toolbar code done (references only; full SVG rendering not implemented). Next agent: add PNG rendering for icons or confirm current label-based approach is acceptable."
+    },
+    {
+      "id": "UI-003",
+      "title": "Reference materials and documentation",
+      "description": "Organize and maintain DAW reference files (Logic Pro, FL Studio, etc.) and documentation.",
+      "status": "done",
+      "priority": "medium",
+      "category": "docs",
+      "dependencies": [],
+      "files": [
+        "references/README.md",
+        "references/fl-studio/FL_link.txt",
+        "references/logic-pro/logic-pro-mac-user-guide.pdf",
+        "references/logic-pro/logic-pro-mac-effects-user-guide.pdf",
+        "references/logic-pro/logic-pro-mac-instruments-user-guide.pdf",
+        "references/logic-pro/logic-pro-mac-control-surfaces-support-guide.pdf"
+      ],
+      "acceptance_criteria": [
+        "Reference folder exists with organized subdirectories",
+        "README.md explains usage",
+        "Logic Pro and FL Studio references present"
+      ],
+      "verification": {
+        "build": "not_applicable",
+        "tests": "not_applicable",
+        "visual_inspection": "not_applicable"
+      },
+      "notes": "References organized and available. Used for toolbar design (Logic Pro reference image used for control bar redesign)."
+    },
+    {
+      "id": "BACKEND-001",
+      "title": "Backend architecture specs (audio/video/tabs)",
+      "description": "Create reference specifications for audio engine, video codecs, and tab structure.",
+      "status": "done",
+      "priority": "medium",
+      "category": "backend",
+      "dependencies": [],
+      "files": [
+        "backend/audio/setup.md",
+        "backend/video/setup.md",
+        "backend/tabs/overview.md",
+        "docs/architecture_notes.md"
+      ],
+      "acceptance_criteria": [
+        "Audio setup references ASIO4ALL and FL Studio ASIO",
+        "Video setup references FFmpeg codecs",
+        "Tabs overview lists planned capabilities"
+      ],
+      "verification": {
+        "build": "not_applicable",
+        "tests": "not_applicable",
+        "visual_inspection": "not_applicable"
+      },
+      "notes": "Specs created. ASIO4ALL confirmed installed (C:\\Program Files (x86)\\ASIO4ALL v2\\asio4all64.dll). Integration pending. Backend does not affect current toolbar work."
+    },
+    {
+      "id": "CONFIG-001",
+      "title": "Agent and command configuration",
+      "description": "Set up .kilo agent and command configurations for health-check doctor.",
+      "status": "done",
+      "priority": "low",
+      "category": "config",
+      "dependencies": [],
+      "files": [
+        ".kilo/agent/doctor.md",
+        ".kilo/command/doctor-check.md"
+      ],
+      "acceptance_criteria": [
+        "Agent file defines doctor role",
+        "Command file defines doctor-check command"
+      ],
+      "verification": {
+        "build": "not_applicable",
+        "tests": "not_applicable",
+        "visual_inspection": "not_applicable"
+      },
+      "notes": "Configured but not actively tested in CI. Ghidra setup confirmed; FL Studio demo not present in Program Files (only FL Studio 2026 and ASIO driver)."
+    },
+    {
+      "id": "BUILD-001",
+      "title": "Build system and .gitignore maintenance",
+      "description": "Maintain .gitignore, build commands, and binary updates.",
+      "status": "in_progress",
+      "priority": "high",
+      "category": "build",
+      "dependencies": ["UI-001"],
+      "files": [
+        ".gitignore",
+        "vegie-break-studio/Cargo.toml",
+        "vegie-break-studio/Cargo.lock",
+        "vegie-break-studio.exe"
+      ],
+      "acceptance_criteria": [
+        ".gitignore excludes rea/ and target/",
+        "cargo build --release succeeds",
+        ".exe rebuilt and copied to root after build",
+        "No modifications to rea/ committed"
+      ],
+      "verification": {
+        "build": "passed",
+        "tests": "not_run",
+        "visual_inspection": "performed"
+      },
+      "notes": "Last build: release profile succeeded. .exe rebuilt (timestamp verified). Force push to VegieBreakDAW performed. Next agent: verify .gitignore is intact before committing."
+    },
+    {
+      "id": "AUDIO-001",
+      "title": "ASIO4ALL audio driver integration",
+      "description": "Integrate ASIO4ALL universal driver (installed at C:\\Program Files (x86)\\ASIO4ALL v2) into the DAW backend.",
+      "status": "backlog",
+      "priority": "medium",
+      "category": "audio",
+      "dependencies": ["BACKEND-001"],
+      "files": [
+        "backend/audio/setup.md"
+      ],
+      "acceptance_criteria": [
+        "Audio backend references ASIO4ALL 64-bit DLL",
+        "Driver state verified (installed vs missing)",
+        "Integration linked to playback mechanism"
+      ],
+      "verification": {
+        "build": "not_applicable",
+        "tests": "not_applicable",
+        "visual_inspection": "not_applicable"
+      },
+      "notes": "ASIO4ALL v2 confirmed installed (a4apanel.exe, asio4all64.dll at C:\\Program Files (x86)\\ASIO4ALL v2). Not yet integrated into rust audio engine. Blocked until audio engine module is added."
+    }
+  ]
+}
